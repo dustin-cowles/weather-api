@@ -8,12 +8,12 @@ Rough Task Breakdown
   * ~~Use fake data~~
   * ~~Logging~~
 * Vagrantfile
-  * Puppet Provisioner
-  * CentOS
+  * Puppet Provisioner (WIP)
+  * ~~CentOS~~
 * Flask API Revisit
-  * Add weather from real API
   * MySQL for data caching, 5 minute TTL
-  * Method to configure credentials/API key (if required)
+  * Add real weather data source (external API)
+  * Method to configure credentials/API key (for external api call)
   * Unit tests
 * Extra credit
   * Flask API Revisit 3
