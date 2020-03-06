@@ -1,10 +1,10 @@
-# based on sample from uwsgi-docs.readthedocs.io
+# based on sample from uwsgi-docs.readthedocs.io    content => template('uwsgi/weather_api.conf.erb')
 [Unit]
 Description=uWSGI Emperor
 After=syslog.target
 
 [Service]
-ExecStart=/root/uwsgi/uwsgi --ini /etc/uwsgi/emperor.ini
+ExecStart=uwsgi --ini /etc/uwsgi/emperor.ini
 # Requires systemd version 211 or newer
 RuntimeDirectory=uwsgi
 Restart=always

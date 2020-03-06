@@ -11,7 +11,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network :private_network, ip: "10.0.0.100"
   config.vm.network :forwarded_port, guest: 80, host: 8080
 
-  config.vm.synced_folder "weather_api", "/var/www/weather_api"
+  # Adding the www-data user and group here with specific uid/gid
+  # I need to find a way to get rid of this because it is not good and also
+  # prevents the use of `vagrant reload --provision`
+  config.vm.provision "shell", inline: "groupadd -g 1011 www-data && useradd -r -u 1011 -g www-data www-data"
+  config.vm.synced_folder "weather_api", "/var/www/weather_api", owner: 1011, group: 1011
 
   config.vm.provision "puppet" do |puppet|
     puppet.manifests_path = "puppet/manifests"

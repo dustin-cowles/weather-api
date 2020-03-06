@@ -1,57 +1,65 @@
 class uwsgi {
   $launch_params = {
-    "uid"         => "www-data",
-    "gid"         => "www-data",
-    "socket"      => "/tmp/uwsgi.sock",
-    "logdate"     => "",
-    "optimize"    => 2,
-    "processes"   => 2,
-    "master"      => "",
-    "die-on-term" => "",
-    "logto"       => "/var/log/uwsgi.log",
-    "chdir"       => "/var/www-data/weather_api",
-    "module"      => "weather_api",
-    "callable"    => "APP",
+    'uid'         => 'www-data',
+    'gid'         => 'www-data',
+    'socket'      => '/tmp/uwsgi.sock',
+    'logdate'     => '',
+    'optimize'    => 2,
+    'processes'   => 2,
+    'master'      => '',
+    'die-on-term' => '',
+    'logto'       => '/var/log/uwsgi.log',
+    'chdir'       => '/var/www-data/weather_api',
+    'module'      => 'weather_api',
+    'callable'    => 'APP',
   }
-  package { "uwsgi":
+  package { 'uwsgi':
     ensure   => installed,
     provider => pip3,
-    require  => Class["python"]
+    require  => Class['python']
   }
   group { 'www-data':
     ensure => present,
+    gid    => 1011
   }
   user { 'www-data':
     ensure  => present,
     groups  => ['www-data'],
+    uid     => 1011,
     require => Group['www-data']
   }
-  file { "/etc/uwsgi/emperor.ini":
-    ensure  => present,
-    owner   => "root",
-    group   => "root",
-    mode    => "0600",
-    content => template("uwsgi/emperor.ini.erb"),
-    require => Package["uwsgi"]
+  file { [ '/etc/uwsgi', '/etc/uwsgi/vassals' ]:
+    ensure => directory,
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755',
   }
-  file { "/etc/systemd/system/emperor.uwsgi.service":
-    ensure  => present,
-    owner   => "root",
-    group   => "root",
-    mode    => "0600",
-    content => template("uwsgi/emperor.uwsgi.service.erb"),
-    require => File["/etc/uwsgi/emperor.ini"]
+  file { '/var/www/weather_api':
+    ensure  => directory,
+    owner   => 'www-data',
+    group   => 'www-data',
+    recurse => true,
+    require => [ User['www-data'], Group['www-data'] ]
   }
-  file { "/etc/uwsgi/vassals/weather_api.conf":
+  file { '/etc/uwsgi/emperor.ini':
     ensure  => present,
-    owner   => "root",
-    group   => "root",
-    mode    => "0600",
-    content => template("default/weather_api.conf.erb")
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    source => 'puppet:///modules/uwsgi/emperor.ini'
   }
-  service { "emperor.uwsgi":
+  file { '/etc/systemd/system/emperor.uwsgi.service':
+    ensure  => present,
+    notify => Service['emperor.uwsgi'],
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    source => 'puppet:///modules/uwsgi/emperor.uwsgi.service',
+    require => File['/etc/uwsgi/emperor.ini']
+  }
+  service { 'emperor.uwsgi':
     ensure  => running,
     enable  => true,
-    require => [ File["/etc/systemd/system/emperor.uwsgi.service"], File["/etc/uwsgi/vassals/weather_api.conf"] ]
+    require => File['/etc/systemd/system/emperor.uwsgi.service']
   }
 }
