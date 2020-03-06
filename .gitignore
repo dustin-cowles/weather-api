@@ -2,3 +2,6 @@
 .vagrant/
 *.pyc
 *.log
+
+# This is rsynced back from guest and should be ignored
+/weather_api/weather_api.ini

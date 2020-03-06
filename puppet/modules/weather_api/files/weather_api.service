@@ -1,12 +1,14 @@
 # based on sample from uwsgi-docs.readthedocs.io    content => template('uwsgi/weather_api.conf.erb')
 [Unit]
-Description=uWSGI Emperor
+Description=weather_api uwsgi
 After=syslog.target
 
 [Service]
-ExecStart=uwsgi --ini /etc/uwsgi/emperor.ini
+User=www-data
+Group=www-data
+ExecStart=uwsgi --ini /var/www/weather_api/weather_api.ini
 # Requires systemd version 211 or newer
-RuntimeDirectory=uwsgi
+WorkingDirectory=/var/www/weather_api/
 Restart=always
 KillSignal=SIGQUIT
 Type=notify
