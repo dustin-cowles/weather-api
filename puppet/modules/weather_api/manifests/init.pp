@@ -1,5 +1,5 @@
 class weather_api {
-  package { 'flask':
+  package { [ 'flask', 'requests' ]:
     ensure   => 'installed',
     provider => pip3
   }
