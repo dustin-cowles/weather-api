@@ -1,3 +1,6 @@
+This repo is the result of a time-boxed exercise as part of an interview. No 
+part of it should be considered worth using or imitating in any capacity.
+
 Usage
 -----
 From the root of repo run `vagrant up`.
